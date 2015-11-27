@@ -76,7 +76,7 @@ myApp.controller('myCtrl', function($scope, socket) {
             );
 
             //Update the model directly
-            $scope.game.state.players[$scope.side].bat = mybat;
+           // $scope.game.state.players[$scope.side].bat = mybat;
 
             //Tell the server we have moved
             socket.emit('update-bat',{

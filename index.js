@@ -81,7 +81,6 @@ io.sockets.on('connection', function(socket) {
 var timer = function(){
     game.tick();
     io.sockets.emit('notification', game);
-
     if(game.state.inPlay==false) clearInterval(intervalID);
 };
 
