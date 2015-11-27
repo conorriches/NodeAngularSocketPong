@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+
+
+    <link rel="stylesheet" type="text/css" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="/node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>
+    <script src="/node_modules/angular/angular.min.js"></script>
+    <script src="js/model.js"></script>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl" >
+
+<div class="container" >
+    <h2>Node & AngularJS Pong</h2>
+
+
+    <div class="scoreboard">
+        <div class="col">
+            <h3>Team: {{side}}</h3>
+            <button ng-click="join('left')" ng-class="{'selected':side=='left'}">Left</button>
+            <button ng-click="join('right')" ng-class="{'selected':side=='right'}">Right</button>
+        </div>
+        <div class="col">
+            <h3>Status: stop</h3>
+            <button ng-click="start()">START!</button>
+        </div>
+        <div class="col">
+            <h3>State</h3>
+            <button ng-click="state()">State</button>
+        </div>
+    </div>
+
+
+    <div class="scoreboard short">
+        <div class="col">
+            <h3>LEFT</h3>
+        </div>
+        <div class="col">
+            <h3>- -</h3>
+        </div>
+        <div class="col">
+            <h3>RIGHT</h3>
+        </div>
+    </div>
+
+
+
+    <div id="area" ng-mousemove="mouseMove($event)">
+        <div id="leftbat" ng-style="{top: setGUIBatBounds(game.state.players.left.bat) + 'px'}"></div>
+        <div id="ball" ng-style="{
+            top: (game.state.ball.y) + 'px',
+            left: (game.state.ball.x) + 'px'
+        }" >
+        </div>
+        <div id="rightbat" ng-style="{top: setGUIBatBounds(game.state.players.right.bat)  + 'px'}"></div>
+    </div>
+
+    <div class="scoreboard">
+        {{game}}
+    </div>
+
+</div>
+
+
+
+
+</body>
+</html>

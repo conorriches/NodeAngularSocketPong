@@ -1,0 +1,77 @@
+html {
+    overflow: -moz-scrollbars-vertical;
+    overflow: scroll;
+}
+
+.container{
+    width:725px;
+}
+
+#area{
+    margin:20px auto;
+    float:left;
+    width:700px;
+    height:400px;
+    background: #000000;
+}
+
+#leftbat{
+    width:20px;
+    height:100px;
+    background:#aaa;
+    position: relative;
+    float:left;
+}
+
+
+#rightbat{
+    width:20px;
+    height:100px;
+    background:#aaa;
+    position: relative;
+    float:right;
+}
+
+#ball{
+    width:20px;
+    height:20px;
+    background: #eee;
+    float:left;
+    position:relative;
+}
+
+.scoreboard{
+    width:700px;
+    border:3px solid black;
+    padding:2%;
+    text-align: center;
+    margin-bottom:6px;
+    float:left;
+}
+
+.scoreboard h3{
+    margin:2px;
+}
+
+.scoreboard button{
+    border:1px dotted black;
+}
+
+.scoreboard button.selected{
+    background: #8eff82;
+}
+
+.scoreboard .col{
+    width:32%;
+    float:left;
+}
+
+.scoreboard.short{
+    margin-bottom:20px;
+}
+
+.scoreboard button{
+    color:black;
+    background:#fff;
+    padding:10px;
+}
