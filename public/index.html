@@ -13,28 +13,32 @@
 </head>
 <body ng-app="myApp" ng-controller="myCtrl" >
 
-<div class="container" >
+<div class="container" ng-show="((game.state.players.left) == null || (game.state.players.left) == null)">
     <h2>Node & AngularJS Pong</h2>
+    <h3>Welcome to multiplayer Pong!</h3>
 
+    <div class="scoreboard">
+        <h4>To play, there must be a left player and a right player. Please choose your side below:</h4>
+        <button ng-click="join('left')" ng-class="{'selected':side=='left'}">Left</button>
+        <button ng-click="join('right')" ng-class="{'selected':side=='right'}">Right</button>
+    </div>
+</div>
+<div class="container" ng-show="!((game.state.players.left) == null || (game.state.players.left) == null)">
+    <h2>Node & AngularJS Pong</h2>
 
     <div class="scoreboard">
         <div class="col">
-            <h3>Team: {{side}}</h3>
-            <button ng-click="join('left')" ng-class="{'selected':side=='left'}">Left</button>
-            <button ng-click="join('right')" ng-class="{'selected':side=='right'}">Right</button>
-        </div>
-        <div class="col">
-            <h3>Status: stop</h3>
-            <button ng-click="start()">START!</button>
-        </div>
-        <div class="col">
-            <h3>State</h3>
-            <button ng-click="state()">State</button>
-        </div>
-    </div>
+            <h3>SIDE: {{side.toString().toUpperCase()}}</h3>
 
-    <div class="scoreboard short">
-        <p>Two players must choose different sides, then click start. :) </p>
+        </div>
+        <div class="col">
+            <button ng-class="{'selected':!game.state.inPlay}" ng-click="start()">{{game.state.outcome==0?"Start":"NEW GAME"}}</button>
+        </div>
+        <div class="col">
+            <h3>Status: {{ game.state.inPlay?"PLAY":(game.state.outcome ==0)?"ROUND":"OVER"}}</h3>
+
+        </div>
+
     </div>
 
     <div class="scoreboard short">
@@ -43,7 +47,7 @@
             <h3>{{game.state.players.left.points}}</h3>
         </div>
         <div class="col">
-            <h3>- -</h3>
+            <h3>{{ game.state.outcome == 0 ? "- -": (game.state.outcome < 0)?"LEFT WIN":"RIGHT WIN";}}</h3>
         </div>
         <div class="col">
             <h3>RIGHT</h3>

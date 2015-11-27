@@ -7,8 +7,14 @@
 
 // Constructor
 function Game() {
+
+    //Parameters
+    this.pointsToWin = 3;
+
+
     this.originalState = {
         'inPlay':false,
+        'outcome':0,
         'players':{
             'left' : null,
             'right' : null
@@ -173,17 +179,28 @@ Game.prototype.score = function(team){
     if(team == 'left'){
         this.state.inPlay = false;
         this.state.players.left.points +=1;
+        this.checkWin();
         return true;
     }
     if(team == 'right'){
         this.state.inPlay = false;
         this.state.players.right.points +=1;
+        this.checkWin();
         return true;
     }
 
     return false;
 };
 
+
+Game.prototype.checkWin = function(){
+    if(this.state.players.left.points == this.pointsToWin ){
+        this.state.outcome = -1;
+    }
+    if(this.state.players.right.points == this.pointsToWin ){
+        this.state.outcome = 1;
+    }
+};
 
 
 /**
