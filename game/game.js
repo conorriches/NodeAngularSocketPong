@@ -26,7 +26,7 @@ function Game() {
             },
             'x':325,
             'y':200,
-            'speed':10,
+            'speed':5,
             'angle':{
                 'dx' : 0,
                 'dy' : 0

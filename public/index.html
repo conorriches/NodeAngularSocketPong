@@ -18,6 +18,12 @@
     <h3>Welcome to multiplayer Pong!</h3>
 
     <div class="scoreboard">
+
+        <h3>Instructions:</h3>
+        <p>When playing, hit the center button to start the game.</p>
+        <p>When a player looses, hit the button again to start a new round.</p>
+        <p>When someone reaches 3, they have won.</p>
+        <hr/>
         <h4>To play, there must be a left player and a right player. Please choose your side below:</h4>
         <button ng-disabled="!game.state.players.left==null" ng-click="join('left')" ng-class="{'selected':side=='left'}">Left</button>
         <button ng-disabled="!game.state.players.left==null" ng-click="join('right')" ng-class="{'selected':side=='right'}">Right</button>
