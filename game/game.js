@@ -115,19 +115,19 @@ Game.prototype.alternate = function(altx, alty){
 
 Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
 
-    if(newX < 20 && this.state.ball.angle.dx < 0){
+    if(newX < 10 && this.state.ball.angle.dx < 0){
         this.alternate(true,false);
     }
 
-    if(newX > 680 && this.state.ball.angle.dx > 0){
+    if(newX > 690 && this.state.ball.angle.dx > 0){
         this.alternate(true,false);
     }
 
-    if(newY < 20 && this.state.ball.angle.dy < 0){
+    if(newY < 10 && this.state.ball.angle.dy < 0){
         this.alternate(false,true);
     }
 
-    if(newY > 300 && this.state.ball.angle.dy > 0){
+    if(newY > 390 && this.state.ball.angle.dy > 0){
         this.alternate(false,true);
     }
 
