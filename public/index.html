@@ -40,12 +40,14 @@
     <div class="scoreboard short">
         <div class="col">
             <h3>LEFT</h3>
+            <h3>{{game.state.players.left.points}}</h3>
         </div>
         <div class="col">
             <h3>- -</h3>
         </div>
         <div class="col">
             <h3>RIGHT</h3>
+            <h3>{{game.state.players.right.points}}</h3>
         </div>
     </div>
 
@@ -62,7 +64,7 @@
     </div>
 
     <div class="scoreboard">
-        {{game}}
+        {{game.state}}
     </div>
 
 </div>

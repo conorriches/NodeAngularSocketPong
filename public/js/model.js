@@ -92,6 +92,7 @@ myApp.controller('myCtrl', function($scope, socket) {
      * When a new message arrives, deal with it.
      */
     socket.on('notification', function(data) {
+        console.log(data);
         $scope.game = data;
         $scope.$apply();
 

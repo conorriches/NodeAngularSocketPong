@@ -33,7 +33,6 @@ function Game() {
 
     //Set the state to the initial one
     this.state = this.originalState;
-
 }
 
 Game.prototype.reset = function(){
@@ -111,15 +110,49 @@ Game.prototype.alternate = function(altx, alty){
 
 };
 
+Game.prototype.gameOverCheck = function(){
+
+};
 
 
 Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
 
-    if(newX < 10 && this.state.ball.angle.dx < 0){
+    if(newX < 0){
+        //Check for left bat
+
+        var batPos = this.state.players.left.bat;
+        var batTop = batPos - 50;
+        var batBottom = batPos + 50;
+
+        if( newY > batBottom || newY < batTop){
+            this.score('right');
+        }
+    }
+
+
+    if(newX > 660){
+        //Check for left bat
+
+        var batPos = this.state.players.right.bat;
+        var batTop = batPos - 50;
+        var batBottom = batPos + 50;
+
+        if( newY > batBottom || newY < batTop){
+            this.score('left');
+        }
+    }
+
+
+
+    //Check for edges
+
+
+    //Check for edes
+    if(newX < 0 && this.state.ball.angle.dx < 0){
         this.alternate(true,false);
     }
 
-    if(newX > 690 && this.state.ball.angle.dx > 0){
+    if(newX > 660 && this.state.ball.angle.dx > 0){
         this.alternate(true,false);
     }
 
@@ -127,7 +160,7 @@ Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
         this.alternate(false,true);
     }
 
-    if(newY > 390 && this.state.ball.angle.dy > 0){
+    if(newY > 380 && this.state.ball.angle.dy > 0){
         this.alternate(false,true);
     }
 
@@ -135,6 +168,21 @@ Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
 };
 
 
+Game.prototype.score = function(team){
+
+    if(team == 'left'){
+        this.state.inPlay = false;
+        this.state.players.left.points +=1;
+        return true;
+    }
+    if(team == 'right'){
+        this.state.inPlay = false;
+        this.state.players.right.points +=1;
+        return true;
+    }
+
+    return false;
+};
 
 
 
@@ -151,8 +199,8 @@ Game.prototype.startGame = function(){
         this.state.ball.x=325;
         this.state.ball.y=200;
 
-        var dx = (Math.random() * 2)-1;
-        var dy = (Math.random() * 2)-1;
+        var dx = ((Math.random() * 2)-1) * 2;
+        var dy = ((Math.random() * 2)-1) * 2;
 
         this.state.ball.angle.dx = dx;
         this.state.ball.angle.dy = dy;
