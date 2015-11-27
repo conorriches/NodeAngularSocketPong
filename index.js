@@ -34,14 +34,26 @@ var intervalID;
  * Set up the sockets
  */
 var io = require('socket.io')(server);
+var allClients = {};
 
 io.sockets.on('connection', function(socket) {
     console.log('= New client has conencted!');
 
+
+    socket.on('disconnect', function() {
+        console.log('Got disconnect!');
+        var side = allClients[socket];
+        game.state.players[side] = null;
+        io.sockets.emit('notification', game);
+    });
+
+
     socket.on('add-client', function(side) {
         console.log("Adding player as " + side);
+        allClients[socket] = side;
         game.addPlayer(side);
-        socket.emit('notification', game);
+
+        io.sockets.emit('notification', game);
     });
 
     socket.on('update-state', function() {

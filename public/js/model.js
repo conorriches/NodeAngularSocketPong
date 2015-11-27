@@ -26,6 +26,7 @@ myApp.controller('myCtrl', function($scope, socket) {
         console.log("Joining as " + side);
         socket.emit('add-client',side);
         $scope.side = side;
+
     };
 
     $scope.start = function(){

@@ -13,17 +13,19 @@
 </head>
 <body ng-app="myApp" ng-controller="myCtrl" >
 
-<div class="container" ng-show="((game.state.players.left) == null || (game.state.players.left) == null)">
+<div class="container" ng-show="((game.state.players.left) == null || (game.state.players.right) == null)">
     <h2>Node & AngularJS Pong</h2>
     <h3>Welcome to multiplayer Pong!</h3>
 
     <div class="scoreboard">
         <h4>To play, there must be a left player and a right player. Please choose your side below:</h4>
-        <button ng-click="join('left')" ng-class="{'selected':side=='left'}">Left</button>
-        <button ng-click="join('right')" ng-class="{'selected':side=='right'}">Right</button>
+        <button ng-disabled="!game.state.players.left==null" ng-click="join('left')" ng-class="{'selected':side=='left'}">Left</button>
+        <button ng-disabled="!game.state.players.left==null" ng-click="join('right')" ng-class="{'selected':side=='right'}">Right</button>
+
+        <h4>Choose your side, then wait for someone to choose their side!</h4>
     </div>
 </div>
-<div class="container" ng-show="!((game.state.players.left) == null || (game.state.players.left) == null)">
+<div class="container" ng-show="!((game.state.players.left) == null || (game.state.players.right) == null)">
     <h2>Node & AngularJS Pong</h2>
 
     <div class="scoreboard">

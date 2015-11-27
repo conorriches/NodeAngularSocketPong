@@ -56,6 +56,9 @@ html {
 .scoreboard button{
     border:1px dotted black;
 }
+.scoreboard button:disabled{
+    color:Red;
+}
 
 .scoreboard button.selected{
     background: #8eff82;
