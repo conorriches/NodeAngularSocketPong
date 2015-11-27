@@ -14,10 +14,10 @@ app.use('/bower_components', express.static(__dirname + '/bower_components/'));
 /**
  * Run the server
  */
-var server = app.listen(8080, function () {
+var server = app.listen(process.env.PORT || 8080, function () {
     var port = server.address().port;
     console.log("=====================================");
-    console.log("Server Started! Go to localhost"  + ":" + port);
+    console.log("Server Started! Go to "  + ":" + port);
     console.log("=====================================");
 });
 
@@ -63,8 +63,15 @@ io.sockets.on('connection', function(socket) {
     socket.on('start', function() {
         console.log("Starting...");
 
+        clearInterval(intervalID);
+        game.reset();
+        socket.emit('notificationGameStatus', false);
+
         var response = game.startGame();
-        intervalID = setInterval(timer,game.state.ball.speed);
+        if(response){
+            intervalID = setInterval(timer,game.state.ball.speed);
+        }
+
         socket.emit('notificationGameStatus', response);
     });
 

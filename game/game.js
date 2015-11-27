@@ -102,12 +102,12 @@ Game.prototype.tick = function(){
 /**
  * Alternates the angle of the ball
  */
-Game.prototype.alternate = function(){
+Game.prototype.alternate = function(altx, alty){
     console.log("Bounce!" + this.state.ball.x + ", " + this.state.ball.y );
 
     //Alternate angle... perhaps add random element?
-    this.state.ball.angle.dx = (this.state.ball.angle.dx * -1) ;
-    this.state.ball.angle.dy = (this.state.ball.angle.dy * -1) ;
+    if(altx)this.state.ball.angle.dx = (this.state.ball.angle.dx * -1) ;
+    if(alty) this.state.ball.angle.dy = (this.state.ball.angle.dy * -1) ;
 
 };
 
@@ -116,19 +116,19 @@ Game.prototype.alternate = function(){
 Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
 
     if(newX < 20 && this.state.ball.angle.dx < 0){
-        this.alternate();
+        this.alternate(true,false);
     }
 
     if(newX > 680 && this.state.ball.angle.dx > 0){
-        this.alternate();
+        this.alternate(true,false);
     }
 
     if(newY < 20 && this.state.ball.angle.dy < 0){
-        this.alternate();
+        this.alternate(false,true);
     }
 
-    if(newY > 380 && this.state.ball.angle.dy > 0){
-        this.alternate();
+    if(newY > 300 && this.state.ball.angle.dy > 0){
+        this.alternate(false,true);
     }
 
     return true;
@@ -151,8 +151,11 @@ Game.prototype.startGame = function(){
         this.state.ball.x=325;
         this.state.ball.y=200;
 
-        var dx = (this.state.ball.angle.dx = Math.random() * 5) + 1;
-        var dy = (this.state.ball.angle.dy = Math.random() * 5) + 1;
+        var dx = (Math.random() * 4)-2;
+        var dy = (Math.random() * 4)-2;
+
+        this.state.ball.angle.dx = dx;
+        this.state.ball.angle.dy = dy;
 
         //Step 3: Start the game
         this.state.inPlay = true;
