@@ -136,8 +136,8 @@ Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
     }
 
 
-    if(newX > 660){
-        //Check for left bat
+    if(newX > 640){
+        //Check for right bat
 
         var batPos = this.state.players.right.bat;
         var batTop = batPos - 50;
@@ -158,7 +158,7 @@ Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
         this.alternate(true,false);
     }
 
-    if(newX > 660 && this.state.ball.angle.dx > 0){
+    if(newX > 640 && this.state.ball.angle.dx > 0){
         this.alternate(true,false);
     }
 

@@ -40,11 +40,31 @@ io.sockets.on('connection', function(socket) {
     console.log('= New client has conencted!');
 
 
+    /**
+     * When a user disconnects, free up their side. This will end the game/
+     * #ragequit.
+     */
     socket.on('disconnect', function() {
-        console.log('Got disconnect!');
+        //Find the side for the socket
         var side = allClients[socket];
+
+        //Make that side null
         game.state.players[side] = null;
+
+        //Tell everyone that it is null
         io.sockets.emit('notification', game);
+        io.sockets.emit('disconnect', game);
+    });
+
+    /**
+     * A client has reset everything.
+     * Shit the bed.
+     */
+    socket.on('reset', function() {
+        game = new Game();
+        allClients = {};
+        clearInterval(intervalID);
+        io.sockets.emit('reset', game);
     });
 
 
@@ -69,6 +89,11 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('tick', function(obj) {
         game.tick();
+    });
+
+    socket.on('ping', function(obj) {
+        console.log("PINGGGG");
+        socket.emit('pong', game);
     });
 
 

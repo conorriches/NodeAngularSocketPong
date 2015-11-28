@@ -2,86 +2,103 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title></title>
-
-
+    <title>Pong</title>
     <link rel="stylesheet" type="text/css" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="/node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>
     <script src="/node_modules/angular/angular.min.js"></script>
     <script src="js/model.js"></script>
 </head>
-<body ng-app="myApp" ng-controller="myCtrl" >
 
-<div class="container" ng-show="((game.state.players.left) == null || (game.state.players.right) == null)">
-    <h2>Node & AngularJS Pong</h2>
-    <h3>Welcome to multiplayer Pong!</h3>
+<body ng-app="myApp" ng-controller="myCtrl" ng-show="init">
 
-    <div class="scoreboard">
+    <!--
+        Shows when there are not enough players or game is not in progress.
+    -->
+    <div class="container" ng-show="!showGame">
 
-        <h3>Instructions:</h3>
-        <p>When playing, hit the center button to start the game.</p>
-        <p>When a player looses, hit the button again to start a new round.</p>
-        <p>When someone reaches 3, they have won.</p>
-        <hr/>
-        <h4>To play, there must be a left player and a right player. Please choose your side below:</h4>
-        <button ng-disabled="!game.state.players.left==null" ng-click="join('left')" ng-class="{'selected':side=='left'}">Left</button>
-        <button ng-disabled="!game.state.players.left==null" ng-click="join('right')" ng-class="{'selected':side=='right'}">Right</button>
+        <h2>Node & AngularJS Pong</h2>
+        <h3>Welcome to multiplayer Pong!</h3>
 
-        <h4>Choose your side, then wait for someone to choose their side!</h4>
-    </div>
-</div>
-<div class="container" ng-show="!((game.state.players.left) == null || (game.state.players.right) == null)">
-    <h2>Node & AngularJS Pong</h2>
+        <div class="scoreboard">
 
-    <div class="scoreboard">
-        <div class="col">
-            <h3>SIDE: {{side.toString().toUpperCase()}}</h3>
+            <h3>Instructions:</h3>
+            <p>When playing, hit the center button to start the game.</p>
+            <p>When a player looses, hit the button again to start a new round.</p>
+            <p>When someone reaches 3, they have won.</p>
+            <hr/>
 
-        </div>
-        <div class="col">
-            <button ng-class="{'selected':!game.state.inPlay}" ng-click="start()">{{game.state.outcome==0?"Start":"NEW GAME"}}</button>
-        </div>
-        <div class="col">
-            <h3>Status: {{ game.state.inPlay?"PLAY":(game.state.outcome ==0)?"ROUND":"OVER"}}</h3>
+            <div ng-show="side==null">
+                <h4>Please choose a side from below:</h4>
+                <button ng-show="game.players.left==null" ng-click="joinGame('left')" >Left</button>
+                <button ng-show="game.players.right==null" ng-click="joinGame('right')" >Right</button>
+                <br/>
+                <small>There need to be two players for a game to commence.</small>
+            </div>
+            <div ng-show="side=='left' || side=='right'">
+                <h4>Please sit tight while someone else connects!</h4>
+                <p><small>P.S. you can open a new tab and choose there!</small></p>
+            </div>
 
         </div>
 
     </div>
 
-    <div class="scoreboard short">
-        <div class="col">
-            <h3>LEFT</h3>
-            <h3>{{game.state.players.left.points}}</h3>
+
+    <div class="container" ng-show="showGame">
+        <h2>Node & AngularJS Pong</h2>
+
+        <div class="scoreboard">
+            <div class="col">
+                <h3>SIDE: {{side.toString().toUpperCase()}}</h3>
+            </div>
+            <div class="col">
+                <button ng-class="{'selected':!game.inPlay}" ng-click="start()">{{game.outcome==0?"Start":"NEW GAME"}}</button>
+            </div>
+            <div class="col">
+                <h3>Status: {{ game.inPlay?"PLAY":(game.outcome ==0)?"ROUND":"OVER"}}</h3>
+
+            </div>
+
         </div>
-        <div class="col">
-            <h3>{{ game.state.outcome == 0 ? "- -": (game.state.outcome < 0)?"LEFT WIN":"RIGHT WIN";}}</h3>
+
+        <div class="scoreboard short">
+            <div class="col" ng-class="{'me':side=='left'}">
+                <h3>LEFT</h3>
+                <h3>{{game.players.left.points}}</h3>
+            </div>
+            <div class="col">
+                <h3>{{ game.outcome == 0 ? "- -": (game.outcome < 0)?"LEFT WIN":"RIGHT WIN";}}</h3>
+            </div>
+            <div class="col" ng-class="{'me':side=='right'}">
+                <h3>RIGHT</h3>
+                <h3>{{game.players.right.points}}</h3>
+            </div>
         </div>
-        <div class="col">
-            <h3>RIGHT</h3>
-            <h3>{{game.state.players.right.points}}</h3>
+
+        <div class="scoreboard short" ng-show="game.outcome != 0">
+            <h2>WINNER</h2>
+            <h3>{{winnerName}} WON!</h3>
         </div>
+
+
+        <div id="area" ng-mousemove="mouseMove($event)">
+            <div id="leftbat" ng-style="{top: setGUIBatBounds(game.players.left.bat) + 'px'}"></div>
+            <div id="ball" ng-style="{
+                top: (game.ball.y) + 'px',
+                left: (game.ball.x) + 'px'
+            }" >
+            </div>
+            <div id="rightbat" ng-style="{top: setGUIBatBounds(game.players.right.bat)  + 'px'}"></div>
+        </div>
+
+        <div class="scoreboard">
+            <button ng-class="{'warning':!game.inPlay}" ng-click="reset(true)">RESET</button>
+            <hr/>
+            {{game}}
+        </div>
+
     </div>
-
-
-
-    <div id="area" ng-mousemove="mouseMove($event)">
-        <div id="leftbat" ng-style="{top: setGUIBatBounds(game.state.players.left.bat) + 'px'}"></div>
-        <div id="ball" ng-style="{
-            top: (game.state.ball.y) + 'px',
-            left: (game.state.ball.x) + 'px'
-        }" >
-        </div>
-        <div id="rightbat" ng-style="{top: setGUIBatBounds(game.state.players.right.bat)  + 'px'}"></div>
-    </div>
-
-    <div class="scoreboard">
-        {{game.state}}
-    </div>
-
-</div>
-
-
 
 
 </body>

@@ -64,6 +64,20 @@ html {
     background: #8eff82;
 }
 
+.scoreboard button.warning{
+    background: #ff545e;
+}
+
+.scoreboard button:hover{
+    background:#eeeeee;
+}
+.scoreboard .col.me{
+    border-radius: 10px;
+    border: 1px dotted white;
+    background: #D0D0D0;
+    color: #440000;
+}
+
 .scoreboard .col{
     width:32%;
     float:left;

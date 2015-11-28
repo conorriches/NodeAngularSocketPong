@@ -4,6 +4,10 @@
 var myApp = angular.module('myApp',[]);
 
 
+/**
+ * Factory to create a socket and deal with events.
+ * Events are on, which listen for emit events.
+ */
 myApp.factory('socket', ['$rootScope', function($rootScope) {
     var socket = io.connect();
 
@@ -18,27 +22,100 @@ myApp.factory('socket', ['$rootScope', function($rootScope) {
 }]);
 
 
+/**
+ * Main controller for the application
+ */
 myApp.controller('myCtrl', function($scope, socket) {
+
+    /**
+     * Local variable dictating which side this player is on
+     * @type {null}
+     */
     $scope.side = null;
+
+    /**
+     * Local variable of the game. Updated from server.
+     * @type {null}
+     */
     $scope.game = null;
 
-    $scope.join = function(side) {
-        console.log("Joining as " + side);
+    /**
+     * Determines whether we are waiting for the other side.
+     * @type {boolean}
+     */
+    $scope.waitingForOtherSide = false;
+
+
+    /**
+     * Check that the game has recieved a model
+     * @type {boolean}
+     */
+    $scope.init = false;
+
+
+    /**
+     * Whether to show the board.
+     * @type {boolean}
+     */
+    $scope.showGame = false;
+
+
+    /**
+     * Who has won?
+    */
+    $scope.winnerName = "";
+
+
+
+    socket.emit('ping','');
+
+
+
+
+
+    /**
+     * Resets te current game.
+     */
+    $scope.reset = function(emit){
+        socket.emit('reset');
+    };
+
+    /**
+     * Request to join the current game on a given side.
+     * @param side String left or right.
+     */
+    $scope.joinGame = function(side) {
+
+        //Say hello to server.
         socket.emit('add-client',side);
+
+        //Save which side we are locally.
         $scope.side = side;
+
+        //Check if we are waiting
+        $scope.checkForPlayers();
+    };
+
+    /**
+     * Checks the waiting status of players.
+     */
+    $scope.checkForPlayers = function(){
+        var count =0;
+
+        if($scope.game != null){
+            if($scope.game.players.left != null){count++;}
+            if($scope.game.players.right != null){count++;}
+        }
+        console.log("There are " + count + " players.");
+
+        $scope.waitingForOtherSide = count < 2;
+
 
     };
 
     $scope.start = function(){
-
         //Tell the server we are starting
         socket.emit('start','');
-
-    };
-
-    $scope.state = function(){
-        console.log("Updating");
-        socket.emit('update-state','');
     };
 
     $scope.setGUIBatBounds = function(val){
@@ -76,28 +153,75 @@ myApp.controller('myCtrl', function($scope, socket) {
                 )
             );
 
-            //Update the model directly
-           // $scope.game.state.players[$scope.side].bat = mybat;
-
             //Tell the server we have moved
             socket.emit('update-bat',{
                 'bat':$scope.side,
                 'pos':mybat
             });
-        }
+            console.log("Sending update about bat position");
+
+        }else{console.error('INCORRECT SIDE');}
 
     };
+
+
+
 
     /**
      * NOTIFICATIONS HERE
      * When a new message arrives, deal with it.
      */
     socket.on('notification', function(data) {
-        console.log(data);
+        console.log("Notification for " + $scope.side );
+        console.log(data.state);
+
+        $scope.game = data.state;
+        $scope.init = true;
+
+        if($scope.side != null){
+            if($scope.game.players.left != null && $scope.game.players.right != null ){
+                $scope.showGame = true;
+
+            }
+        }
+
+        /**
+         * Based on the outcome, generate the name to show
+         */
+        if($scope.outcome == 0 ) $scope.winnerName = "";
+        if($scope.outcome == -1 ) $scope.winnerName = "LEFT";
+        if($scope.outcome == 1 ) $scope.winnerName = "RIGHT";
+
+        $scope.$apply();
+
+
+    });
+
+    socket.on('reset', function(data) {
+        console.log("RESET event recieved");
+        $scope.game.players = {};
+        $scope.waitingForOtherSide = false;
+        $scope.showGame = false;
+        $scope.init = false;
+        $scope.side = null;
+
+        socket.emit('ping','');
+
+    });
+
+    socket.on('disconnect', function(data) {
+        $scope.reset(false);
+
+    });
+
+    socket.on('pong', function(data) {
+        console.log("Pong!");
         $scope.game = data;
+        $scope.init = true;
         $scope.$apply();
 
     });
+
 
     socket.on('notificationGameStatus', function(data) {
         console.log("* Game Status notification: " + data);
