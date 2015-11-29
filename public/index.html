@@ -78,11 +78,11 @@
 
         <div class="scoreboard short" ng-show="game.outcome != 0">
             <h2>WINNER</h2>
-            <h3>{{winnerName}} WON!</h3>
+            <h3>{{(game.outcome < 0)?"LEFT PLAYER":"RIGHT PLAYER";}} WON!</h3>
         </div>
 
 
-        <div id="area" ng-mousemove="mouseMove($event)">
+        <div id="area" ng-mousemove="mouseMove($event)" ng-show="game.outcome == 0 ">
             <div id="leftbat" ng-style="{top: setGUIBatBounds(game.players.left.bat) + 'px'}"></div>
             <div id="ball" ng-style="{
                 top: (game.ball.y) + 'px',
@@ -92,12 +92,20 @@
             <div id="rightbat" ng-style="{top: setGUIBatBounds(game.players.right.bat)  + 'px'}"></div>
         </div>
 
-        <div class="scoreboard">
-            <button ng-class="{'warning':!game.inPlay}" ng-click="reset(true)">RESET</button>
+
+
+    </div>
+
+    <br/><br/><br/>
+    <hr/>
+    <div class="container">
+        <div class="scoreboard " style="border:none;color:#aaa">
+            <h3>Debug Information</h3>
+            {{side || "-"}}<br/>
+            <button ng-click="reset(true)">RESET</button>
             <hr/>
             {{game}}
         </div>
-
     </div>
 
 

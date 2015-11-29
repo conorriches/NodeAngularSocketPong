@@ -38,15 +38,19 @@ var allClients = {};
 
 io.sockets.on('connection', function(socket) {
     console.log('= New client has conencted!');
+    console.log(socket.id);
 
 
     /**
-     * When a user disconnects, free up their side. This will end the game/
+     * When a user disconnects, free up their side. This will end the game if in progress.
      * #ragequit.
+     *
+     * If a player is waiting, do not disconnect them!
      */
-    socket.on('disconnect', function() {
-        //Find the side for the socket
-        var side = allClients[socket];
+    socket.on('disconnect', function(e) {
+
+        var side = allClients[socket.id];
+        console.log("Disconnect: " + socket.id + "on side " + side);
 
         //Make that side null
         game.state.players[side] = null;
@@ -69,8 +73,8 @@ io.sockets.on('connection', function(socket) {
 
 
     socket.on('add-client', function(side) {
-        console.log("Adding player as " + side);
-        allClients[socket] = side;
+        console.log("Adding player on socket " + socket.id + " as " + side);
+        allClients[socket.id] = side;
         game.addPlayer(side);
 
         io.sockets.emit('notification', game);

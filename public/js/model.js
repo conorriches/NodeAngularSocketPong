@@ -172,7 +172,7 @@ myApp.controller('myCtrl', function($scope, socket) {
      * When a new message arrives, deal with it.
      */
     socket.on('notification', function(data) {
-        console.log("Notification for " + $scope.side );
+        console.log("Notification" );
         console.log(data.state);
 
         $scope.game = data.state;
@@ -181,16 +181,19 @@ myApp.controller('myCtrl', function($scope, socket) {
         if($scope.side != null){
             if($scope.game.players.left != null && $scope.game.players.right != null ){
                 $scope.showGame = true;
-
+            }else {
+                $scope.showGame = false;
             }
+        }else{
+            $scope.showGame = false;
         }
 
         /**
          * Based on the outcome, generate the name to show
          */
-        if($scope.outcome == 0 ) $scope.winnerName = "";
-        if($scope.outcome == -1 ) $scope.winnerName = "LEFT";
-        if($scope.outcome == 1 ) $scope.winnerName = "RIGHT";
+        if($scope.outcome == 0 ){$scope.winnerName = "";}
+        if($scope.outcome == -1 ){ $scope.winnerName = "LEFT";}
+        if($scope.outcome == 1 ){$scope.winnerName = "RIGHT";}
 
         $scope.$apply();
 
@@ -209,14 +212,11 @@ myApp.controller('myCtrl', function($scope, socket) {
 
     });
 
-    socket.on('disconnect', function(data) {
-        $scope.reset(false);
-
-    });
 
     socket.on('pong', function(data) {
         console.log("Pong!");
-        $scope.game = data;
+        console.log(data.state);
+        $scope.game = data.state;
         $scope.init = true;
         $scope.$apply();
 
