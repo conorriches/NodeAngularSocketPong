@@ -71,16 +71,31 @@ html {
 .scoreboard button:hover{
     background:#eeeeee;
 }
-.scoreboard .col.me{
+.scoreboard .col{
     border-radius: 10px;
     border: 1px dotted white;
-    background: #D0D0D0;
+    width:222px;
+    float:left;
+}
+
+.scoreboard .col.me{
+    background: #F0FFEF;
     color: #440000;
+    border-bottom: 4px solid lime;
+    border-top: 4px solid lime;
+}
+
+.scoreboard .col h3.you{
+    color:red;
+}
+
+.scoreboard .col.winner{
+    background:#67b168;
+    color:#ffff00;
 }
 
 .scoreboard .col{
-    width:32%;
-    float:left;
+
 }
 
 .scoreboard.short{

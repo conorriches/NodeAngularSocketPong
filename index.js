@@ -37,9 +37,18 @@ var io = require('socket.io')(server);
 var allClients = {};
 
 io.sockets.on('connection', function(socket) {
-    console.log('= New client has conencted!');
-    console.log(socket.id);
+    console.log('Client has connected on socket ' + socket.id);
 
+    /**
+     * When a user chooses a side, add them to the game.
+     * Then update the model and broadcast it.
+     */
+    socket.on('add-client', function(side) {
+        console.log("Adding player on socket " + socket.id + " as " + side);
+        allClients[socket.id] = side;
+        game.addPlayer(side);
+        io.sockets.emit('notification', game);
+    });
 
     /**
      * When a user disconnects, free up their side. This will end the game if in progress.
@@ -60,6 +69,7 @@ io.sockets.on('connection', function(socket) {
         io.sockets.emit('disconnect', game);
     });
 
+
     /**
      * A client has reset everything.
      * Shit the bed.
@@ -69,15 +79,6 @@ io.sockets.on('connection', function(socket) {
         allClients = {};
         clearInterval(intervalID);
         io.sockets.emit('reset', game);
-    });
-
-
-    socket.on('add-client', function(side) {
-        console.log("Adding player on socket " + socket.id + " as " + side);
-        allClients[socket.id] = side;
-        game.addPlayer(side);
-
-        io.sockets.emit('notification', game);
     });
 
     socket.on('update-state', function() {
@@ -102,10 +103,16 @@ io.sockets.on('connection', function(socket) {
 
 
     socket.on('start', function() {
-        console.log("Starting...");
+
+        //Check state
+        console.log("Game status is " + game.state.outcome);
+        if(game.state.outcome != 0){
+            //In a game
+            console.log("Starting...");
+            game.reset();
+        }
 
         clearInterval(intervalID);
-        game.reset();
         socket.emit('notificationGameStatus', false);
 
         var response = game.startGame();

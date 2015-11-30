@@ -80,6 +80,8 @@ myApp.controller('myCtrl', function($scope, socket) {
         socket.emit('reset');
     };
 
+
+
     /**
      * Request to join the current game on a given side.
      * @param side String left or right.
@@ -94,12 +96,12 @@ myApp.controller('myCtrl', function($scope, socket) {
 
         //Check if we are waiting
         $scope.checkForPlayers();
+
+        $scope.$apply();
     };
 
-    /**
-     * Checks the waiting status of players.
-     */
-    $scope.checkForPlayers = function(){
+
+    $scope.getPlayerCount = function(){
         var count =0;
 
         if($scope.game != null){
@@ -108,10 +110,17 @@ myApp.controller('myCtrl', function($scope, socket) {
         }
         console.log("There are " + count + " players.");
 
-        $scope.waitingForOtherSide = count < 2;
-
-
+        return count;
     };
+
+    /**
+     * Checks the waiting status of players.
+     */
+    $scope.checkForPlayers = function(){
+        $scope.waitingForOtherSide = $scope.getPlayerCount() < 2;
+    };
+
+
 
     $scope.start = function(){
         //Tell the server we are starting
@@ -127,40 +136,59 @@ myApp.controller('myCtrl', function($scope, socket) {
     };
 
 
-
     /**
-     * When the mouse moves the following should happen:
-     * 1. Model should be updated with the mouse.
-     * 3. GUI refreshed.
+     * When a ley is pressed this function is called.
+     * If it's an up/down key, move the bat.
+     * Other keys can be added here.
+     * @param e event itself
      */
-    $scope.mouseMove = function(event) {
+    $scope.arrow = function(e){
 
-        //Ensure the user has chosen a side.
-        if($scope.side =='left' || $scope.side =='right'){
+        //If there is a scrollar, stop scroll event.
 
-            //Get the element, and calculate the relative position to the screen
-            var element = event.srcElement;
-            var y = (event.y - element.getBoundingClientRect().top);
 
-            //Make sure that the bat cannot be outside the range of the table.
-            // Bat has height of 100, so make min of 50 and max of height-50.
-            //((batPos < 50)? 00 : batPos - 50)
-            var mybat = Math.floor(
-                Math.max(
-                    50, Math.min(
-                        y, element.getBoundingClientRect().height-50
-                    )
-                )
-            );
+        //Make sure that the game is playable and the user has a correct side
+       // if(!$scope.showGame){return;}
+        //if($scope.outcome !=0){e.preventDefault();return;}
+        if($scope.side =='left' || $scope.side =='right') {
+
+            //Get the key
+            var key = e.keyCode;
+            console.log("Key down :" + key);
+
+            //Get the current position
+            var current = $scope.game.players[$scope.side].bat;
+
+            //Depending on the key, do something
+            switch (key) {
+                case 32: //SPACE
+                    e.preventDefault();
+                    $scope.start();
+                    break;
+                case 38: //UP
+                    current -= 40;
+                    e.preventDefault();
+                    break;
+                case 40: //DWN
+                    current += 40;
+                    e.preventDefault();
+                    break;
+                default :
+                    console.log("No event for that key.");
+                    return true;
+            }
+
+            var batPos = Math.max(50, Math.min(current, 350));
 
             //Tell the server we have moved
-            socket.emit('update-bat',{
-                'bat':$scope.side,
-                'pos':mybat
+            socket.emit('update-bat', {
+                'bat': $scope.side,
+                'pos': batPos
             });
-            console.log("Sending update about bat position");
 
-        }else{console.error('INCORRECT SIDE');}
+            console.log("Sending update about bat position");
+        }
+
 
     };
 

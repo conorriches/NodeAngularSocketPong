@@ -44,6 +44,9 @@ function Game() {
 Game.prototype.reset = function(){
     console.log("RESET ===========");
     this.state = this.originalState;
+    this.state.players.left.points = 0;
+    this.state.players.right.points = 0;
+    this.state.outcome = 0;
 };
 
 // class methods
@@ -127,10 +130,11 @@ Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
         //Check for left bat
 
         var batPos = this.state.players.left.bat;
-        var batTop = batPos - 50;
-        var batBottom = batPos + 50;
+        var batTop = batPos - 50 - 20;
+        var batBottom = batPos + 50 + 20;
 
         if( newY > batBottom || newY < batTop){
+           // console.log("SCORE: bat len " + batTop + " to " + batBottom + ", ball at");
             this.score('right');
         }
     }
@@ -140,8 +144,8 @@ Game.prototype.boundaryCheck = function(oldX,oldY,newX,newY){
         //Check for right bat
 
         var batPos = this.state.players.right.bat;
-        var batTop = batPos - 50;
-        var batBottom = batPos + 50;
+        var batTop = batPos - 50 - 20; //Allow for bat and ball
+        var batBottom = batPos + 50 + 20;
 
         if( newY > batBottom || newY < batTop){
             this.score('left');

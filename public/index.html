@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pong</title>
+    <title>Multiplayer Pong</title>
     <link rel="stylesheet" type="text/css" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="/node_modules/socket.io/node_modules/socket.io-client/socket.io.js"></script>
@@ -10,34 +10,40 @@
     <script src="js/model.js"></script>
 </head>
 
-<body ng-app="myApp" ng-controller="myCtrl" ng-show="init">
+<body ng-app="myApp" ng-controller="myCtrl" ng-show="init" ng-keydown="arrow($event)">
 
     <!--
         Shows when there are not enough players or game is not in progress.
     -->
     <div class="container" ng-show="!showGame">
 
-        <h2>Node & AngularJS Pong</h2>
+        <h2>Multiplayer Node & AngularJS Pong</h2>
         <h3>Welcome to multiplayer Pong!</h3>
 
         <div class="scoreboard">
 
             <h3>Instructions:</h3>
-            <p>When playing, hit the center button to start the game.</p>
-            <p>When a player looses, hit the button again to start a new round.</p>
-            <p>When someone reaches 3, they have won.</p>
+            <p>Choose a side below. If no sides are available then a game is currently in play.</p>
+            <p>Once you have a side, you'll be paired with someone else who has chosen a side.</p>
+            <p>Click Start, and your aim is to stop the ball hitting your side.</p>
             <hr/>
 
-            <div ng-show="side==null">
-                <h4>Please choose a side from below:</h4>
-                <button ng-show="game.players.left==null" ng-click="joinGame('left')" >Left</button>
-                <button ng-show="game.players.right==null" ng-click="joinGame('right')" >Right</button>
-                <br/>
-                <small>There need to be two players for a game to commence.</small>
+            <div ng-show="getPlayerCount() < 2">
+                <div ng-show="side==null">
+                    <h4>Please choose a side from below:</h4>
+                    <button ng-show="game.players.left==null" ng-click="joinGame('left')" >Left</button>
+                    <button ng-show="game.players.right==null" ng-click="joinGame('right')" >Right</button>
+                    <br/>
+                    <small>There need to be two players for a game to commence.</small>
+                </div>
+                <div ng-show="side=='left' || side=='right'">
+                    <h4>Please sit tight while someone else connects!</h4>
+                    <p><small>P.S. you can open a new tab and choose there!</small></p>
+                </div>
             </div>
-            <div ng-show="side=='left' || side=='right'">
-                <h4>Please sit tight while someone else connects!</h4>
-                <p><small>P.S. you can open a new tab and choose there!</small></p>
+
+            <div ng-show="getPlayerCount() == 2">
+                <h2>A game is in progress. Please wait for a player to leave first1</h2>
             </div>
 
         </div>
@@ -48,41 +54,36 @@
     <div class="container" ng-show="showGame">
         <h2>Node & AngularJS Pong</h2>
 
-        <div class="scoreboard">
-            <div class="col">
-                <h3>SIDE: {{side.toString().toUpperCase()}}</h3>
-            </div>
-            <div class="col">
-                <button ng-class="{'selected':!game.inPlay}" ng-click="start()">{{game.outcome==0?"Start":"NEW GAME"}}</button>
-            </div>
-            <div class="col">
-                <h3>Status: {{ game.inPlay?"PLAY":(game.outcome ==0)?"ROUND":"OVER"}}</h3>
-
-            </div>
-
-        </div>
-
         <div class="scoreboard short">
-            <div class="col" ng-class="{'me':side=='left'}">
+            <div class="col" ng-class="{'me':side=='left','winner':game.outcome == -1}">
                 <h3>LEFT</h3>
                 <h3>{{game.players.left.points}}</h3>
             </div>
             <div class="col">
                 <h3>{{ game.outcome == 0 ? "- -": (game.outcome < 0)?"LEFT WIN":"RIGHT WIN";}}</h3>
-            </div>
-            <div class="col" ng-class="{'me':side=='right'}">
+                </div>
+            <div class="col" ng-class="{'me':side=='right','winner':game.outcome == 1}">
                 <h3>RIGHT</h3>
                 <h3>{{game.players.right.points}}</h3>
             </div>
+            <div class="clearfix"></div>
+            <div class="col"><h3 class="you">{{(side == 'left')?"^":""}}</h3></div>
+            <div class="col">
+                <button ng-class="{'selected':!game.inPlay}" ng-click="start()">
+                    {{game.outcome==0?"Start":"NEW GAME"}}
+                </button>
+            </div>
+            <div class="col"><h3 class="you">{{(side == 'right')?"^":""}}</h3></div>
+
         </div>
 
         <div class="scoreboard short" ng-show="game.outcome != 0">
-            <h2>WINNER</h2>
+            <h1>{{((game.outcome == -1 && side=='left') || (game.outcome == 1 && side=='right'))?"WINNER":"LOSE!";}}</h1>
             <h3>{{(game.outcome < 0)?"LEFT PLAYER":"RIGHT PLAYER";}} WON!</h3>
         </div>
 
 
-        <div id="area" ng-mousemove="mouseMove($event)" ng-show="game.outcome == 0 ">
+        <div id="area">
             <div id="leftbat" ng-style="{top: setGUIBatBounds(game.players.left.bat) + 'px'}"></div>
             <div id="ball" ng-style="{
                 top: (game.ball.y) + 'px',
