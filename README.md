@@ -1,64 +1,19 @@
 #Pong game with AngularJS 
-By Conor
+By Conor Riches
 
-###Objectives
-* Get model set up
-* Allow clients to update model
-* Ensure model updates across clients
-* Link model to GUI
+###How It Works
+This is a game of multiplayer pong, using AngularJS, Node and Sockets. 
+To keep the players aligned and the UI in check, there is a model on the server which is continually updated and sent to any connected clients.
+The clients stay updated, and the UI reacts to the change in the model.
 
 ###Architecture
 * Model of the game runs on the server. This is the single source of truth that all clients must adhere to.
 * Clients can connect to the server, and choose to take control of left or right bat. 
 * On an action, clients send a message to server updating state.
   This can be done with a game state object
-  
-###Objects
+* Communication can be an entire object, updating the whole state. 
+* This is heavy, a future improvement would just be updating what has changed.
 
-Single Source of Truth on the server as an object:
-```
-{
-    'bats':{
-        'l':$ypos,
-        'r',$ypos
-    },
-    'ball':{
-        'x':xpos,
-        'y':ypos
-    },
-    'inplay': boolean,
-    'points': {
-        'l' : 1,
-        'r' : 2
-    }
-}
-
-```
-
-Alternative:
-```
-{
-    'l':{
-        'points':1,
-        'ypos': 300
-    },
-    'r':{
-            'points':1,
-            'ypos': 300
-        },
-    'ball':{
-        'x':xpos,
-        'y':ypos
-    },
-    'inplay': boolean,
-}
-
-```
-
-Communication can be an entire object, updating the whole state. 
-This is heavy, needs a way of just updating the key objects.
-
-* Only l and r can be updated. The rest are read only.
 
 ###Communication
 ####Bats
